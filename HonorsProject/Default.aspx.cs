@@ -39,7 +39,7 @@ namespace HonorsProject
             }
             catch
             {
-                BadRequest();
+                SomethingWrong();
             }
 
         }
@@ -64,12 +64,12 @@ namespace HonorsProject
                 {
                     if (xnl.Item(0).InnerText == "404")
                     {
-                        BadRequest();
+                        SomethingWrong();
                         return;
                     }
                 } else
                 {
-                    BadRequest();
+                    SomethingWrong();
                     return;
                 }
 
@@ -122,7 +122,7 @@ namespace HonorsProject
             }
             catch
             {
-                BadRequest();
+                SomethingWrong();
             }
         }
 
@@ -132,7 +132,7 @@ namespace HonorsProject
             {
                 if (stockObject.code == 404)
                 {
-                    BadRequest();
+                    SomethingWrong();
                     return;
                 }
                 CompanyNameTextBox.Text = stockObject.companyName;
@@ -158,15 +158,47 @@ namespace HonorsProject
             }
             catch
             {
-                BadRequest();
+                SomethingWrong();
             }
 
         }
 
-        protected void BadRequest()
+        protected void SomethingWrong()
+        {
+            try
+            {
+                string GOOD_TCKR = "NFLX";
+                string URL = @"http://localhost:63390/Service1.svc/GetStock?tckr=" + GOOD_TCKR;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                WebResponse response = request.GetResponse();
+                Stream dataStream = response.GetResponseStream();
+                StreamReader sreader = new StreamReader(dataStream);
+                string responseReader = sreader.ReadToEnd();
+                response.Close();
+
+                BadTicker();
+            }
+            catch
+            {
+                BadRequest();
+            }
+        }
+
+        protected void BadTicker()
         {
             CompanyNameTextBox.Text = "Invalid Ticker Symbol";
             PriceTextBox.Text = "Try: NFLX";
+            TickerSymbolResultTextBox.Text = "";
+            CurrencyTextBox.Text = "";
+            PriceChangeAmountTextBox.Text = "";
+            PriceChangePercentTextBox.Text = "";
+            PriceChangeIndicatorTextBox.Text = "";
+        }
+
+        protected void BadRequest()
+        {
+            CompanyNameTextBox.Text = "Something went wrong";
+            PriceTextBox.Text = "";
             TickerSymbolResultTextBox.Text = "";
             CurrencyTextBox.Text = "";
             PriceChangeAmountTextBox.Text = "";
